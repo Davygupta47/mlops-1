@@ -14,9 +14,10 @@ def preprocess():
     )
 #Filtering active users
     user_counts = ratings.group_by("userId").count()
-    active_users = user_counts.filter(pl.col("count") > 50)["userId"]
+    active_users = user_counts.filter(pl.col("count") > 50)["userId"].to_list()
 
-    ratings = ratings.filter(pl.col("userId").is_in(active_users.to_list()))   
+    active_users_set = set(active_users)
+    ratings = ratings.filter(pl.col("userId").apply(lambda x: x in active_users_set))
     df = ratings.join(movies, on="movieId")
 #Extraction of genres into list
     df = df.with_columns(
