@@ -3,3 +3,5 @@ dependencies/
 pyproject.toml
 uv.lock
 .python-version
+result_output.txt
+data/raw
