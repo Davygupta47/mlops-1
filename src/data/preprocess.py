@@ -2,26 +2,33 @@ import polars as pl
 import os
 
 def preprocess():
-    ratings = pl.read_csv("data/raw/ml-25m/ratings.csv")
-    movies = pl.read_csv("data/raw/ml-25m/movies.csv")
+    print("Reading CSVs...")
+    ratings = pl.scan_csv("data/raw/ml-25m/ratings.csv")
+    movies = pl.scan_csv("data/raw/ml-25m/movies.csv")
 
+    print("Transforming...")
     ratings = ratings.with_columns(
-        pl.from_epoch("timestamp").alias("datetime")
-    )
-#Implicit feedback (like/dislike)
-    ratings = ratings.with_columns(
+        pl.from_epoch("timestamp").alias("datetime"),
         (pl.col("rating") >= 3.5).cast(pl.Int8).alias("liked")
     )
-#Filtering active users
-    user_counts = ratings.group_by("userId").count()
-    active_users = user_counts.filter(pl.col("count") > 50)["userId"].to_list()
 
-    ratings = ratings.filter(pl.col("userId").is_in(active_users))
-    df = ratings.join(movies, on="movieId")
-#Extraction of genres into list
-    df = df.with_columns(
-        pl.col("genres").str.split("|")
+    # Filter active users (>50 ratings) using semi-join — no Python list conversion
+    active_users = (
+        ratings.group_by("userId")
+        .count()
+        .filter(pl.col("count") > 50)
+        .select("userId")
     )
+    ratings = ratings.join(active_users, on="userId", how="semi")
+
+    # Join with movies and split genres
+    df = (
+        ratings.join(movies, on="movieId")
+        .with_columns(pl.col("genres").str.split("|"))
+    )
+
+    print("Collecting results...")
+    df = df.collect()
 
     os.makedirs("data/processed", exist_ok=True)
     df.write_parquet("data/processed/data.parquet")
