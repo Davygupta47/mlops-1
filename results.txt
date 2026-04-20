@@ -1,0 +1,41 @@
+Reading CSVs...
+Transforming...
+/workspaces/mlops-1/src/data/preprocess.py:18: DeprecationWarning: `count` was renamed; use `len` instead
+  .count()
+Collecting results...
+Preprocessing complete
+shape: (5, 8)
+┌────────┬─────────┬────────┬────────────┬─────────────────────┬───────┬─────────────────────────────────┬─────────────────────────────────┐
+│ userId ┆ movieId ┆ rating ┆ timestamp  ┆ datetime            ┆ liked ┆ title                           ┆ genres                          │
+│ ---    ┆ ---     ┆ ---    ┆ ---        ┆ ---                 ┆ ---   ┆ ---                             ┆ ---                             │
+│ i64    ┆ i64     ┆ f64    ┆ i64        ┆ datetime[μs]        ┆ i8    ┆ str                             ┆ list[str]                       │
+╞════════╪═════════╪════════╪════════════╪═════════════════════╪═══════╪═════════════════════════════════╪═════════════════════════════════╡
+│ 1      ┆ 296     ┆ 5.0    ┆ 1147880044 ┆ 2006-05-17 15:34:04 ┆ 1     ┆ Pulp Fiction (1994)             ┆ ["Comedy", "Crime", … "Thrille… │
+│ 1      ┆ 306     ┆ 3.5    ┆ 1147868817 ┆ 2006-05-17 12:26:57 ┆ 1     ┆ Three Colors: Red (Trois coule… ┆ ["Drama"]                       │
+│ 1      ┆ 307     ┆ 5.0    ┆ 1147868828 ┆ 2006-05-17 12:27:08 ┆ 1     ┆ Three Colors: Blue (Trois coul… ┆ ["Drama"]                       │
+│ 1      ┆ 665     ┆ 5.0    ┆ 1147878820 ┆ 2006-05-17 15:13:40 ┆ 1     ┆ Underground (1995)              ┆ ["Comedy", "Drama", "War"]      │
+│ 1      ┆ 899     ┆ 3.5    ┆ 1147868510 ┆ 2006-05-17 12:21:50 ┆ 1     ┆ Singin' in the Rain (1952)      ┆ ["Comedy", "Musical", "Romance
+-----------------------------------------------------------------
+Starting data split...
+Splitting /workspaces/mlops-1/data/processed/data.parquet with test_size=0.2
+Wrote train split to /workspaces/mlops-1/data/processed/train.parquet
+Wrote test split to /workspaces/mlops-1/data/processed/test.parquet
+Data split done!!
+-----------------------------------------------------------------
+2026/04/20 06:21:01 INFO mlflow.store.db.utils: Creating initial MLflow database tables...
+2026/04/20 06:21:01 INFO mlflow.store.db.utils: Updating database tables
+Training done!!
+-----------------------------------------------------------------
+Accuracy: 0.6221381410697173
+----------------------------------------------------------------
+API service:-
+INFO:     Will watch for changes in these directories: ['/workspaces/mlops-1']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [28719] using StatReload
+INFO:     Started server process [28724]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:35948 - "GET /health HTTP/1.1" 200 OK
+/workspaces/mlops-1/.venv/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LogisticRegression was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:38620 - "GET /predict?user=1&item=1 HTTP/1.1" 200 OK

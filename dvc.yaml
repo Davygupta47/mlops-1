@@ -1,0 +1,35 @@
+stages:
+  ingest:
+    cmd: python src/data/ingest.py
+    outs:
+      - data/raw/ml-25m.zip
+      - data/raw/ml-25m
+    
+  preprocess:
+    cmd: python src/data/preprocess.py
+    deps:
+      - data/raw/ml-25m/ratings.csv
+      - data/raw/ml-25m/movies.csv
+    outs:
+      - data/processed/data.parquet
+
+  split:
+    cmd: python src/features/build.py
+    deps:
+      - data/processed/data.parquet
+    outs:
+      - data/processed/train.parquet
+      - data/processed/test.parquet
+    
+  train:
+    cmd: python src/models/train.py
+    deps:
+      - data/processed/train.parquet
+    outs:
+      - model.pkl
+  
+  eval:
+    cmd: python src/models/eval.py
+    deps:
+      - model.pkl
+      - data/processed/test.parquet

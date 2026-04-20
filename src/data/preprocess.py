@@ -15,8 +15,8 @@ def preprocess():
     # Filter active users (>50 ratings) using semi-join — no Python list conversion
     active_users = (
         ratings.group_by("userId")
-        .count()
-        .filter(pl.col("count") > 50)
+        .len()
+        .filter(pl.col("len") > 50)
         .select("userId")
     )
     ratings = ratings.join(active_users, on="userId", how="semi")
@@ -27,14 +27,11 @@ def preprocess():
         .with_columns(pl.col("genres").str.split("|"))
     )
 
-    print("Collecting results...")
-    df = df.collect()
-
+    print("Writing results...")
     os.makedirs("data/processed", exist_ok=True)
-    df.write_parquet("data/processed/data.parquet")
+    df.sink_parquet("data/processed/data.parquet")
 
     print("Preprocessing complete")
-    print(df.head())
 
 
 if __name__ == "__main__":

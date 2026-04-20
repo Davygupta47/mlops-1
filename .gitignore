@@ -3,5 +3,6 @@ dependencies/
 pyproject.toml
 uv.lock
 .python-version
-result_output.txt
 data/raw
+src/serving/__pycache__
+model.pkl
